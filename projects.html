@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Projects — Huzaifa Nurudin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500&display=swap" rel="stylesheet"/>
+  <script>tailwind.config={theme:{extend:{fontFamily:{display:['PT Sans','sans-serif'],body:['DM Sans','sans-serif']},colors:{accent:'#0051ff','accent-light':'#3374ff'}}}}</script>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;}
+    html{font-family:'DM Sans',sans-serif;}
+    body{background:#ffffff;color:#18181b;}
+    body.dark{background:#09090b;color:#f4f4f5;}
+    h1,h2,h3,h4,h5,h6{font-family:'PT Sans',sans-serif;}
+    .nav-link{position:relative;}
+    .nav-link::after{content:'';position:absolute;bottom:-2px;left:0;width:0;height:1.5px;background:currentColor;transition:width .25s cubic-bezier(.4,0,.2,1);}
+    .nav-link:hover::after{width:100%;}
+    ::-webkit-scrollbar{width:5px;}::-webkit-scrollbar-track{background:transparent;}::-webkit-scrollbar-thumb{background:#0051ff;border-radius:99px;}
+    body::before{content:'';position:fixed;inset:0;background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");pointer-events:none;z-index:0;opacity:.4;}
+    .btn-primary{position:relative;overflow:hidden;}
+    .btn-primary::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:rgba(255,255,255,.18);transform:skewX(-20deg);transition:left .4s cubic-bezier(.4,0,.2,1);}
+    .btn-primary:hover::after{left:160%;}
+    .photo-frame{position:relative;overflow:hidden;background:#e4e4e7;cursor:pointer;}
+    .photo-frame img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s ease;}
+    .project-card{transition:transform .3s cubic-bezier(.4,0,.2,1),border-color .2s;cursor:pointer;}
+    .project-card:hover{transform:translateY(-4px);}
+    .project-card:hover .photo-frame img{transform:scale(1.03);}
+    [x-cloak]{display:none!important;}
+    .reveal{opacity:0;transform:translateY(22px);transition:opacity .55s cubic-bezier(.4,0,.2,1),transform .55s cubic-bezier(.4,0,.2,1);}
+    .reveal.visible{opacity:1;transform:translateY(0);}
+    
+    /* Lightbox Styles */
+    .lightbox-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.92);
+      backdrop-filter: blur(12px);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s ease, visibility 0.3s ease;
+      cursor: pointer;
+    }
+    .lightbox-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    .lightbox-content {
+      max-width: 90vw;
+      max-height: 85vh;
+      position: relative;
+      animation: scaleIn 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+      cursor: default;
+    }
+    @keyframes scaleIn {
+      from { transform: scale(0.92); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .lightbox-content img {
+      max-width: 90vw;
+      max-height: 85vh;
+      object-fit: contain;
+      border-radius: 20px;
+      box-shadow: 0 25px 45px -12px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.15);
+    }
+    .close-lightbox {
+      position: absolute;
+      top: -40px;
+      right: -10px;
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(4px);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    .close-lightbox:hover {
+      background: #ef4444;
+      transform: scale(1.05);
+    }
+    .close-lightbox svg {
+      width: 20px;
+      height: 20px;
+      stroke: white;
+      stroke-width: 2;
+    }
+    @media (max-width: 640px) {
+      .close-lightbox { top: -35px; right: -5px; width: 34px; height: 34px; }
+    }
+    .view-project-btn {
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.375rem;
+      transition: color 0.2s;
+    }
+    .view-project-btn:hover {
+      color: #0051ff;
+    }
+    .project-card .photo-frame {
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 font-body antialiased">
+
+  <!-- header -->
+  <header class="fixed top-0 left-0 right-0 z-50 bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5 transition-all duration-300">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between">
+      <a href="index.html#hero" class="font-display font-bold text-xl tracking-tight relative z-10">
+        <span class="text-zinc-900 dark:text-white">Huza</span><span class="text-accent">ifa.</span>
+      </a>
+      <ul class="hidden md:flex items-center gap-8 text-sm font-medium">
+        <li><a href="#" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Services</a></li>
+        <li><a href="#" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">About</a></li>
+        <li><a href="#" class="nav-link text-zinc-600 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a></li>
+      </ul>
+      <div class="flex items-center gap-3">
+        <button id="darkModeToggle" class="w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors" aria-label="Dark mode">
+          <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 hidden dark:block" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707M17.657 17.657l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>
+          <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 block dark:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+        </button>
+        <a href="#" class="hidden md:inline-flex items-center gap-2 btn-primary bg-accent text-white text-sm font-medium px-5 py-2 rounded-full hover:bg-accent-light transition-colors">Hire me &rarr;</a>
+        <button id="mobileMenuBtn" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full border border-zinc-200 dark:border-zinc-800" aria-label="Toggle menu">
+          <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+      </div>
+    </nav>
+    <div id="mobileMenu" class="hidden md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
+      <ul class="flex flex-col px-6 py-4 gap-4 text-sm font-medium">
+        <li><a href="#" class="block text-zinc-700 dark:text-zinc-300">Services</a></li>
+        <li><a href="#" class="block text-accent font-medium">Work</a></li>
+        <li><a href="#" class="block text-zinc-700 dark:text-zinc-300">About</a></li>
+        <li><a href="#" class="block text-zinc-700 dark:text-zinc-300">Blog</a></li>
+        <li><a href="#" class="block text-zinc-700 dark:text-zinc-300">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero section -->
+    <section class="pt-36 pb-12 relative overflow-hidden">
+      <div class="absolute top-0 right-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl pointer-events-none"></div>
+      <div class="max-w-6xl mx-auto px-6 relative z-10">
+        <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Portfolio</p>
+        <h1 class="reveal font-display font-bold text-5xl md:text-6xl text-zinc-900 dark:text-white leading-tight mb-4">All Projects</h1>
+        <p class="reveal text-lg text-zinc-500 dark:text-zinc-400 max-w-xl leading-relaxed mb-8">A complete look at my work across branding, digital artwork and creative campaigns.</p>
+      </div>
+    </section>
+
+    <!-- Projects grid (click any card or 'view project' opens image lightbox) -->
+    <section class="pb-24">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          
+          <!-- Project 1 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/4.png" data-title="ÉCLAT BLANC — Perfume Campaign">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/4.png" alt="ÉCLAT BLANC — Perfume Campaign" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Illustrator</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">ÉCLAT BLANC — Perfume Campaign</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Elegant product advertisement designed for a luxury fragrance brand, focused on premium aesthetics, clean composition, and sophisticated visual storytelling.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2025</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 2 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/5.png" data-title="NEXT LEVEL GAMING — Esports Campaign Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/5.png" alt="NEXT LEVEL GAMING — Esports Campaign" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">NEXT LEVEL GAMING — Esports Campaign Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">High-impact gaming poster designed with cinematic lighting, bold typography, and intense visual effects to capture competitive energy.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2024</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 3 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/6.jpg" data-title="NIKE — Sports Campaign Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/6.jpg" alt="NIKE — Sports Campaign" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">NIKE — Sports Campaign Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Dynamic sports poster designed with bold typography, energetic composition, and modern visual effects to highlight athletic performance.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2024</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 4 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/7.jpeg" data-title="BATTLE ZONE — Gaming Thumbnail">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/7.jpeg" alt="BATTLE ZONE — Gaming Thumbnail" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Thumbnail Design</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">BATTLE ZONE — Gaming Thumbnail</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Engaging gaming thumbnail designed with cinematic effects, bold text placement, and high-energy visuals to increase viewer attention.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2024</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 5 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/8.png" data-title="VESTA — Real Estate Landing Page">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/8.png" alt="VESTA — Real Estate Landing" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Real Estate Brand</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">VESTA — Real Estate Landing Page</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Modern real estate landing page designed with a clean layout, premium property visuals, and conversion-focused sections.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2024</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 6 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/0.jpg" data-title="SODA BLAST — Beverage Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/0.jpg" alt="SODA BLAST — Beverage Poster" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">poster</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">SODA BLAST — Beverage Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Refreshing soda poster designed with vibrant splash effects, bold typography, energetic color combinations, and premium product visuals.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2023</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 7 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/02.png" data-title="LUXE SCENT — Perfume Brand Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/02.png" alt="LUXE SCENT — Perfume Poster" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Poster Design</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">LUXE SCENT — Perfume Brand Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Elegant perfume brand poster designed with luxury aesthetics, cinematic lighting, premium typography, and sophisticated product presentation.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2023</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 8 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/03.jpg" data-title="BEAT NIGHT — Music Event Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/03.jpg" alt="BEAT NIGHT — Music Event" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Poster Design</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">BEAT NIGHT — Music Event Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">High-energy music event poster designed with vibrant lighting effects, bold typography, dynamic visuals, and concert-style aesthetics.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2023</span>
+              </div>
+            </div>
+          </article>
+
+          <!-- Project 9 -->
+          <article class="project-card group h-full rounded-2xl overflow-hidden bg-white dark:bg-zinc-900 border border-zinc-100 dark:border-zinc-800 hover:border-accent transition-colors" data-img-src="huzaifa/04.jpg" data-title="UMRAH JOURNEY — Spiritual Travel Poster">
+            <div class="photo-frame w-full h-52">
+              <img src="huzaifa/04.jpg" alt="UMRAH JOURNEY — Spiritual Travel" loading="lazy"/>
+            </div>
+            <div class="p-6">
+              <div class="flex flex-wrap gap-2 mb-3">
+                <span class="text-xs px-2.5 py-1 rounded-full bg-orange-50 dark:bg-zinc-800 text-accent border border-orange-200 dark:border-zinc-700">Poster Design</span>
+                <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">Photoshop</span>
+              </div>
+              <h3 class="font-display font-bold text-lg text-zinc-900 dark:text-white mb-2 group-hover:text-accent transition-colors">UMRAH JOURNEY — Spiritual Travel Poster</h3>
+              <p class="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed mb-4">Peaceful Umrah poster designed with elegant Islamic aesthetics, soft lighting, sacred imagery, and refined typography to reflect spirituality.</p>
+              <div class="flex items-center justify-between">
+                <span class="view-project-btn inline-flex items-center gap-1.5 text-sm font-medium text-zinc-900 dark:text-white nav-link">View project →</span>
+                <span class="text-xs text-zinc-400">2023</span>
+              </div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="pb-24">
+      <div class="max-w-6xl mx-auto px-6">
+        <div class="bg-zinc-900 dark:bg-zinc-800 rounded-3xl p-10 md:p-14 text-center relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none"></div>
+          <div class="absolute bottom-0 left-0 w-40 h-40 bg-accent/10 rounded-full blur-2xl pointer-events-none"></div>
+          <div class="relative z-10">
+            <p class="text-xs font-medium text-accent tracking-widest uppercase mb-4">Ready to start?</p>
+            <h2 class="font-display font-bold text-3xl md:text-4xl text-white mb-4">Want your project here?</h2>
+            <p class="text-zinc-400 max-w-md mx-auto mb-8">I'm available for new projects. Tell me about what you're building and let's see if we're a good fit.</p>
+            <a href="index.html#contact" class="inline-flex items-center gap-2 btn-primary bg-accent text-white font-medium px-8 py-3.5 rounded-full hover:bg-accent-light transition-colors">Start a project &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="border-t border-zinc-100 dark:border-zinc-900">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-zinc-400">© <span id="yr"></span> Huzaifa Nurudin. All rights reserved. <br> Designed with passion for visual storytelling.</p>
+      <p class="text-xs text-zinc-500">Powered by <a href="#" class="hover:text-accent transition-colors">Huzaifa</a></p>
+    </div>
+  </footer>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div id="lightbox" class="lightbox-overlay">
+    <div class="lightbox-content">
+      <img id="lightboxImg" src="" alt="Project preview">
+      <div class="close-lightbox" id="closeLightbox">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dark mode toggle
+    const toggleBtn = document.getElementById('darkModeToggle');
+    const htmlEl = document.documentElement;
+    const isDark = localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+      document.body.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.body.classList.remove('dark');
+    }
+    toggleBtn.addEventListener('click', () => {
+      const dark = document.documentElement.classList.toggle('dark');
+      document.body.classList.toggle('dark', dark);
+      localStorage.setItem('theme', dark ? 'dark' : 'light');
+    });
+
+    // Mobile menu
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if(mobileBtn) mobileBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+
+    // Intersection observer for reveal animations
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -30px 0px' });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    document.getElementById('yr').textContent = new Date().getFullYear();
+
+    // ---- LIGHTBOX FUNCTIONALITY ----
+    const lightbox = document.getElementById('lightbox');
+    const lightboxImg = document.getElementById('lightboxImg');
+    const closeLightbox = document.getElementById('closeLightbox');
+    
+    // Function to open lightbox with given image source
+    function openLightbox(imgSrc, title = '') {
+      if (!lightbox || !lightboxImg) return;
+      lightboxImg.src = imgSrc;
+      lightboxImg.alt = title || 'Project preview';
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden'; // prevent background scroll
+    }
+    
+    // Close lightbox function
+    function closeLightboxFn() {
+      lightbox.classList.remove('active');
+      document.body.style.overflow = '';
+      // optional: clear src after animation
+      setTimeout(() => { if(!lightbox.classList.contains('active')) lightboxImg.src = ''; }, 300);
+    }
+    
+    // Attach click events to all project cards (both image area AND "View project" text)
+    const projectCards = document.querySelectorAll('.project-card');
+    projectCards.forEach(card => {
+      const imgSrc = card.getAttribute('data-img-src');
+      const title = card.getAttribute('data-title') || 'Design preview';
+      if (!imgSrc) return;
+      
+      // Click on photo-frame (image wrapper)
+      const photoFrame = card.querySelector('.photo-frame');
+      if (photoFrame) {
+        photoFrame.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openLightbox(imgSrc, title);
+        });
+      }
+      
+      // Click on "View project →" span
+      const viewBtn = card.querySelector('.view-project-btn');
+      if (viewBtn) {
+        viewBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openLightbox(imgSrc, title);
+        });
+      }
+      
+      // Optional: make entire card clickable but we already have dedicated elements
+      // but we also allow click on card body except if it's nested button? fine as is.
+      // Also click on the heading or description won't trigger (only image and view button) — intuitive.
+      // But also add a subtle style: if user clicks anywhere on the card besides those, no problem.
+    });
+    
+    // Close lightbox when clicking overlay background
+    if (lightbox) {
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox || e.target === closeLightbox || closeLightbox.contains(e.target)) {
+          closeLightboxFn();
+        }
+      });
+    }
+    
+    // Escape key closes lightbox
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && lightbox && lightbox.classList.contains('active')) {
+        closeLightboxFn();
+      }
+    });
+  </script>
+</body>
+</html>
